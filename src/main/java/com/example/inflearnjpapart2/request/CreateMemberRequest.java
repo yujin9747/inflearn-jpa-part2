@@ -10,4 +10,10 @@ public class CreateMemberRequest {
     // @NotEmpty = ""도 허용하지 않음. 0보다 큰 길이의 문자열이 들어가야 한다.
     @NotEmpty
     private String name;
+    @NotEmpty
+    private String city;
+    @NotEmpty
+    private String street;
+    @NotEmpty
+    private String zipcode;
 }
