@@ -1,5 +1,6 @@
 package com.example.inflearnjpapart2.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -17,12 +18,12 @@ public class Member {
     @Column(name = "member_di")
     private Long id;
 
-    @NotEmpty
     private String name;
 
     @Embedded
     private Address address;
 
     @OneToMany(mappedBy = "member")
+//    @JsonIgnore
     private List<Order> orders = new ArrayList<>();
 }
