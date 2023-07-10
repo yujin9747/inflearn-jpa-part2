@@ -23,4 +23,8 @@ public class MemberRepository {
                 .setParameter("name", name)
                 .getResultList();
     }
+
+    public Member findOne(Long id) {
+        return em.find(Member.class, id);
+    }
 }
