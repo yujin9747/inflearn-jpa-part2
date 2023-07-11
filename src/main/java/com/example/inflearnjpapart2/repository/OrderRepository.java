@@ -83,4 +83,22 @@ public class OrderRepository {
                 .getResultList();
     }
 
+    public List<Order> findAllWithItem() {
+        // 근데 내가 직접 해보니까 distinct 붙이지 않아도 뻥튀기 되지 않음.
+        // 하지만 query에도 distinct를 넣어준다는 것이 차이점.
+        // distinct를 해도 db 쿼리에서 distinct를 하지 못하는 이유 => 모든 컬럼의 값이 같아야 해서 아래의 상황에서는 안된다.
+        // 애플리케이션 단에서 중복을 제거해준다.
+        /**치명적인 단점:
+         * - 1:N를 페치조인 하는 순간 페이징 불가능 -> 쿼리에는 limit, offset 지정 X, 메모리 단에서 페이징함.
+         * - 컬렉션 페치 조인은 1개만 사용 가능
+         * */
+        return em.createQuery("select distinct o from Order o" + // distinct를 넣어주는 이유는 1:N 관계에서 데이터가 뻥튀기 되는 것을 막기 위해서
+                " join fetch o.member m" +
+                " join fetch o.delivery d" +
+                " join fetch o.orderItems oi" +
+                " join fetch oi.item i", Order.class)
+                .setFirstResult(1)
+                .setMaxResults(100) // WARNING: firstResult/maxResults specified with collection fetch; applying in memory
+                .getResultList();
+    }
 }
