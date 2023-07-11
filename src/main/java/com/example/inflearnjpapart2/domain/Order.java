@@ -16,9 +16,9 @@ public class Order {
     @Id @GeneratedValue
     @Column(name = "order_id")
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY) // db에서 가져올 때 order만 가져오고 member는 new ProxyMember를 해서 넣어 둔다. (ByteBuddyInterceptor 역할)
     @JoinColumn(name = "member_id")
-    private Member member;
+    private Member member; // Member를 뽑으려고 하는데 프록시 객체가 있는 경우 type definition error 발생.
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
