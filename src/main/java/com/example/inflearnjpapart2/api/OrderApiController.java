@@ -3,6 +3,7 @@ package com.example.inflearnjpapart2.api;
 import com.example.inflearnjpapart2.domain.Order;
 import com.example.inflearnjpapart2.domain.OrderItem;
 import com.example.inflearnjpapart2.domain.OrderSearch;
+import com.example.inflearnjpapart2.dto.OrderDto;
 import com.example.inflearnjpapart2.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,14 @@ public class OrderApiController {
             orderItems.stream().forEach(o -> o.getItem().getName());
         }
         return all;
+    }
+
+    @GetMapping("/api/v2/orders")
+    public List<OrderDto> ordersV2() {
+        List<Order> orders = orderRepository.findAll(new OrderSearch());
+        return orders.stream()
+                .map(OrderDto::new)
+                .collect(java.util.stream.Collectors.toList());
     }
 
 }
