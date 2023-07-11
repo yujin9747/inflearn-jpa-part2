@@ -5,6 +5,7 @@ import com.example.inflearnjpapart2.domain.OrderItem;
 import com.example.inflearnjpapart2.domain.OrderSearch;
 import com.example.inflearnjpapart2.dto.OrderDto;
 import com.example.inflearnjpapart2.repository.OrderRepository;
+import com.example.inflearnjpapart2.repository.order.query.OrderQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderApiController {
     private final OrderRepository orderRepository;
+    private final OrderQueryRepository orderQueryRepository;
 
 
     @GetMapping("/api/v1/orders")
@@ -58,5 +60,10 @@ public class OrderApiController {
         return orders.stream()
                 .map(OrderDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/api/v4/orders")
+    public List<OrderDto> ordersV4() {
+        return orderQueryRepository.findOrderQueryDtos();
     }
 }

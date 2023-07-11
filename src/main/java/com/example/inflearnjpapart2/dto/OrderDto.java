@@ -29,4 +29,13 @@ public class OrderDto {
                 .map(OrderItemDto::new)
                 .collect(Collectors.toList());
     }
+
+    public OrderDto(Long orderId, String name, LocalDateTime orderDate, OrderStatus orderStatus, Address address) {
+        this.orderId = orderId;
+        this.name = name;
+        this.orderDate = orderDate;
+        this.orderStatus = orderStatus;
+        this.address = address;
+        this.orderItems = orderItems;
+    }
 }
