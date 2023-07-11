@@ -3,6 +3,7 @@ package com.example.inflearnjpapart2.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class Order {
     @JoinColumn(name = "delivery_id")
     private Delevery delivery;
 
+//    @BatchSize(size = 1000) // local 적용
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 

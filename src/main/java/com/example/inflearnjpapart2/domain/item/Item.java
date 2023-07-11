@@ -5,10 +5,12 @@ import com.example.inflearnjpapart2.exception.NotEnoughException;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
 import java.util.List;
 
+//@BatchSize(size = 1000) // local 적용
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)   // book이든, album이든, movie이든 상관 없이 한 테이블에 넣는다는 뜻
 @DiscriminatorColumn(name = "dtype")
