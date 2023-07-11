@@ -24,6 +24,6 @@ public class Member {
     private Address address;
 
     @OneToMany(mappedBy = "member")
-//    @JsonIgnore
+    @JsonIgnore
     private List<Order> orders = new ArrayList<>();
 }
