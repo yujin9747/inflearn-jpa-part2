@@ -1,6 +1,7 @@
 package com.example.inflearnjpapart2.repository.order.query;
 
 import com.example.inflearnjpapart2.dto.OrderDto;
+import com.example.inflearnjpapart2.dto.OrderFlatDto;
 import com.example.inflearnjpapart2.dto.OrderItemDto;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -77,5 +78,22 @@ public class OrderQueryRepository {
         return orders.stream()
                 .map(o -> o.getOrderId())
                 .collect(Collectors.toList());
+    }
+
+    public List<OrderFlatDto> findAllByDto_flat() {
+        // 쿼리 총 1번 나가는 솔루션
+        // 장점: 쿼리가 한 번만 나간다
+        // 단점: 페이징 가능하나 Order를 기준으로 페이징 불가능. Order가 뻥튀기 되기 떄문이다. (1:N 관계이기 때문에). 데이타가 많지 않으면 이게 훨씬 빠를 것.
+        // 하지만 항상 쿼리가 적게 나간다고 좋은 것이 아님.
+        return em.createQuery("select new com.example.inflearnjpapart2.dto.OrderFlatDto" +
+                                "(o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count)" +
+                                " from Order o " +
+                                "join o.member m " +
+                                "join o.delivery d " +
+                                "join o.orderItems oi " +
+                                "join oi.item i",
+                        OrderFlatDto.class
+                )
+                .getResultList();
     }
 }
