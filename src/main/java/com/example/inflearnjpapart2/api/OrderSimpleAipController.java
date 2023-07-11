@@ -3,11 +3,13 @@ package com.example.inflearnjpapart2.api;
 import com.example.inflearnjpapart2.domain.Order;
 import com.example.inflearnjpapart2.domain.OrderSearch;
 import com.example.inflearnjpapart2.repository.OrderRepository;
+import com.example.inflearnjpapart2.response.SimpleOrderDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * xToOne 관계 ( Many to One, One to One )
@@ -29,5 +31,12 @@ public class OrderSimpleAipController {
             order.getDelivery().getAddress();
         }
         return all;
+    }
+
+    @GetMapping("/api/v2/simple-orders")
+    public List<SimpleOrderDto> ordersV2() {
+        return orderRepository.findAll(new OrderSearch()).stream()
+                .map(SimpleOrderDto::new)
+                .collect(Collectors.toList());
     }
 }

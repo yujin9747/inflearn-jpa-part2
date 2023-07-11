@@ -61,9 +61,9 @@ public class initDb {
             em.persist(orderB);
         }
 
-        private static Delevery createDelivery(Member memberA) {
+        private static Delevery createDelivery(Member member) {
             Delevery delivery = new Delevery();
-            delivery.setAddress(memberA.getAddress());
+            delivery.setAddress(member.getAddress());
             return delivery;
         }
 
