@@ -3,7 +3,8 @@ package com.example.inflearnjpapart2.api;
 import com.example.inflearnjpapart2.domain.Order;
 import com.example.inflearnjpapart2.domain.OrderSearch;
 import com.example.inflearnjpapart2.repository.OrderRepository;
-import com.example.inflearnjpapart2.response.SimpleOrderDto;
+import com.example.inflearnjpapart2.dto.SimpleOrderDto;
+import com.example.inflearnjpapart2.repository.order.simplequery.OrderSimpleQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderSimpleAipController {
     private final OrderRepository orderRepository;
+    private final OrderSimpleQueryRepository orderSimpleQueryRepository;
 
     @GetMapping("/api/v1/simple-orders")
     public List<Order> ordersV1() {
@@ -45,5 +47,10 @@ public class OrderSimpleAipController {
         return orderRepository.findAllWithMemberDelivery().stream()
                 .map(SimpleOrderDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/api/v4/simple-orders")
+    public List<SimpleOrderDto> ordersV4() {
+        return orderSimpleQueryRepository.findOrderDtos();
     }
 }
