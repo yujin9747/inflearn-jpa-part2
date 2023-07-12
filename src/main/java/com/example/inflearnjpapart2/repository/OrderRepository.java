@@ -83,4 +83,38 @@ public class OrderRepository {
                 .getResultList();
     }
 
+    public List<Order> findAllWithItem() {
+        // 근데 내가 직접 해보니까 distinct 붙이지 않아도 뻥튀기 되지 않음.
+        // 하지만 query에도 distinct를 넣어준다는 것이 차이점.
+        // distinct를 해도 db 쿼리에서 distinct를 하지 못하는 이유 => 모든 컬럼의 값이 같아야 해서 아래의 상황에서는 안된다.
+        // 애플리케이션 단에서 중복을 제거해준다.
+        /**치명적인 단점:
+         * - 1:N를 페치조인 하는 순간 페이징 불가능 -> 쿼리에는 limit, offset 지정 X, 메모리 단에서 페이징함.
+         * - 컬렉션 페치 조인은 1개만 사용 가
+         * */
+        return em.createQuery("select distinct o from Order o" + // distinct를 넣어주는 이유는 1:N 관계에서 데이터가 뻥튀기 되는 것을 막기 위해서
+                " join fetch o.member m" +
+                " join fetch o.delivery d" +
+                " join fetch o.orderItems oi" +
+                " join fetch oi.item i", Order.class)
+                .setFirstResult(1)
+                .setMaxResults(100) // WARNING: firstResult/maxResults specified with collection fetch; applying in memory
+                .getResultList();
+    }
+
+    // query 수는 v3보단 늘어났지만 페이징이 가능하다. 또한 order items까지 조인하고 가져올 필요가 없으므로 성능이 오히려 좋아질 수 있다.
+    // v3는 쿼리는 한 번에 나가지만 데이터가 많아지면 성능이 떨어질 수 있다.
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        // member와 delivery를 빼도 batch size 때문에 최적화가 된다. -> 네트워크를 더 많이 탄다는 단점이 있으므로 그냥 fetch join으로 잡는게 좋다.
+//        return em.createQuery("select o from Order o", Order.class)
+//                .setFirstResult(offset)
+//                .setMaxResults(limit)
+//                .getResultList();
+        return em.createQuery("select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
 }
