@@ -8,6 +8,7 @@ import com.example.inflearnjpapart2.dto.OrderFlatDto;
 import com.example.inflearnjpapart2.dto.OrderItemDto;
 import com.example.inflearnjpapart2.repository.OrderRepository;
 import com.example.inflearnjpapart2.repository.order.query.OrderQueryRepository;
+import com.example.inflearnjpapart2.service.query.OrderQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class OrderApiController {
     private final OrderRepository orderRepository;
     private final OrderQueryRepository orderQueryRepository;
+    private final OrderQueryService orderQueryService;
 
 
     @GetMapping("/api/v1/orders")
@@ -30,7 +32,7 @@ public class OrderApiController {
             order.getMember().getName();
             order.getDelivery().getAddress();
             List<OrderItem> orderItems = order.getOrderItems();
-            orderItems.stream().forEach(o -> o.getItem().getName());
+            orderItems.forEach(o -> o.getItem().getName());
         }
         return all;
     }
@@ -40,28 +42,21 @@ public class OrderApiController {
         List<Order> orders = orderRepository.findAll(new OrderSearch());
         return orders.stream()
                 .map(OrderDto::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/api/v3/orders")
     public List<OrderDto> ordersV3() {
-        List<Order> orders = orderRepository.findAllWithItem();
-//        for (Order order : orders) {
-//            System.out.println("order = " + order);
-//            System.out.println("order.getId() = " + order.getId());
-//        }
-        return orders.stream()
-                .map(OrderDto::new)
-                .collect(Collectors.toList());
+        return orderQueryService.ordersV3();
     }
 
     @GetMapping("/api/v3.1/orders")
-    public List<OrderDto> ordersV3_page(@RequestParam(value = "offset", defaultValue = "0") int offset,
+    public List<OrderDto> ordersV3Page(@RequestParam(value = "offset", defaultValue = "0") int offset,
                                         @RequestParam(value = "limit", defaultValue = "100") int limit) {
         List<Order> orders = orderRepository.findAllWithMemberDelivery(offset, limit);
         return orders.stream()
                 .map(OrderDto::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @GetMapping("/api/v4/orders")
@@ -74,8 +69,8 @@ public class OrderApiController {
         return orderQueryRepository.findAllByDto_optimization();
     }
 
-    @GetMapping("/api/v6/orders")
-//    public List<OrderFlatDto> ordersV6() {
+
+@GetMapping("/api/v6/orders")
     public List<OrderDto> ordersV6() { // 이렇게 반환하려면 복잡한 코드 필요함. 중복 거르는 과정. 
         List<OrderFlatDto> flats = orderQueryRepository.findAllByDto_flat();
         return flats.stream()
@@ -83,6 +78,6 @@ public class OrderApiController {
                         Collectors.mapping(o -> new OrderItemDto(o.getOrderId(), o.getItemName(), o.getOrderPrice(), o.getCount()), Collectors.toList())))
                 .entrySet().stream()
                 .map(e -> new OrderDto(e.getKey().getOrderId(), e.getKey().getName(), e.getKey().getOrderDate(), e.getKey().getOrderStatus(), e.getKey().getAddress(), e.getValue()))
-                .collect(Collectors.toList());
+                .toList();
     }
 }
