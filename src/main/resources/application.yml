@@ -13,6 +13,8 @@ spring:
         default_batch_fetch_size: 4 # in query로 한 번에 많이 가져올 수 있음. -> item이 총 4개니까 item 가져오는 쿼리 한 번만 할 수 있는 최솟값.
 #        show_sql: true
         format_sql: true
+    openInView: false # OSIV -> false로 해야 성능 최적화 가능.
+    # org.hibernate.LazyInitializationException: could not initialize proxy -> lazy loading을 모두 transaction 안으로 넣어주거나, fetch join을 사용해야 한다.
 logging:
   level:
     org.hibernate.SQL: debug
